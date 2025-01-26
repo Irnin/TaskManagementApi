@@ -2,6 +2,7 @@ package com.project.employee_records.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,11 +31,13 @@ public class Task {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime finishedDate;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime assignedDate;
+
     @NonNull
     @Column(length = 2)
     private Integer taskScore;
 
-    //
     @NonNull
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -48,6 +51,11 @@ public class Task {
     @NonNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dueDate;
+
+    @JsonGetter("categoryName")
+    public String getCategoryName() {
+        return category != null ? category.getName() : null;
+    }
 
     // Relation
     @ManyToOne

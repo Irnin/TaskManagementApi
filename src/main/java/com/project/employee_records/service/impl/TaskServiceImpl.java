@@ -5,12 +5,14 @@ import com.project.employee_records.model.User;
 import com.project.employee_records.repository.TaskRepository;
 import com.project.employee_records.repository.UserRepository;
 import com.project.employee_records.service.TaskService;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -59,6 +61,7 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
 
         task.setUser(user);
+        task.setAssignedDate(LocalDateTime.now());
         return taskRepository.save(task);
     }
 
@@ -68,6 +71,22 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new EntityNotFoundException("Task not found with ID: " + taskId));
 
         task.setUser(null);
+        task.setAssignedDate(null);
+
+        return taskRepository.save(task);
+    }
+
+    @Override
+    public Task finish(Integer taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new EntityNotFoundException("Task not found with ID: " + taskId));
+
+        if(task.getUser() == null) {
+            throw new EntityExistsException("Task unassigned");
+        }
+
+        task.setFinished(true);
+        task.setFinishedDate(LocalDateTime.now());
 
         return taskRepository.save(task);
     }

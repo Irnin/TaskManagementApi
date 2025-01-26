@@ -125,4 +125,12 @@ public class TaskController {
     public Task assigneTask(@PathVariable Integer idTask) {
         return taskService.unassigneUser(idTask);
     }
+
+    /**
+     * Finish project
+     */
+    @PatchMapping("/tasks/complete/{idTask}")
+    public Task finishProject(@PathVariable Integer idTask) {
+        return taskService.finish(idTask);
+    }
 }

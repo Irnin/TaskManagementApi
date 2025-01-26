@@ -18,4 +18,5 @@ public interface TaskService {
     Page<Task> getAssignedTask(Integer idUser, Pageable pageable);
     Task assignUserToTask(Integer taskId, Integer userId);
     Task unassigneUser(Integer taskId);
+    Task finish(Integer taskId);
 }
