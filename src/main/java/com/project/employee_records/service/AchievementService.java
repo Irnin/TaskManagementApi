@@ -1,6 +1,7 @@
 package com.project.employee_records.service;
 
 import com.project.employee_records.model.Achievement;
+import com.project.employee_records.model.Task;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,4 +12,6 @@ public interface AchievementService {
     Page<Achievement> getAchievements(Pageable pageable);
     Achievement setAchievement(Achievement achievement);
     void deleteAchievement(Integer idAchiev);
+
+    Achievement getAchievementByTask(Integer taskId);
 }

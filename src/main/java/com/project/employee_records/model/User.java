@@ -2,6 +2,7 @@ package com.project.employee_records.model;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -16,6 +17,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(force = true)
 @Table(name = "app_user")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +33,7 @@ public class User {
     private String email;
 
     @NonNull
-    @JsonIgnoreProperties
+    @JsonIgnore
     private String password;
 
     @NonNull
@@ -50,6 +52,6 @@ public class User {
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("user-task")
+    @JsonIgnore
     private List<Task> tasks = new ArrayList<>();
 }

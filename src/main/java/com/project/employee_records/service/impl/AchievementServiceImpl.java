@@ -1,6 +1,7 @@
 package com.project.employee_records.service.impl;
 
 import com.project.employee_records.model.Achievement;
+import com.project.employee_records.model.Task;
 import com.project.employee_records.repository.AchievementRepository;
 import com.project.employee_records.service.AchievementService;
 import lombok.AllArgsConstructor;
@@ -34,5 +35,10 @@ public class AchievementServiceImpl implements AchievementService {
     @Override
     public void deleteAchievement(Integer idAchiev) {
         achievementRepository.deleteById(idAchiev);
+    }
+
+    @Override
+    public Achievement getAchievementByTask(Integer taskId) {
+        return achievementRepository.findByTask_IdTask(taskId);
     }
 }

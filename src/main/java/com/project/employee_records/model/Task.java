@@ -1,8 +1,6 @@
 package com.project.employee_records.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @NoArgsConstructor(force = true)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,11 +59,14 @@ public class Task {
     // Relation
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = true)
-    @JsonBackReference("category-task")
+    @JsonIgnoreProperties({"tasks"})
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = true)
-    @JsonBackReference("user-task")
+    @JsonIgnore
     private User user;
+
+    @OneToOne(mappedBy = "task")
+    private Achievement achievement;
 }

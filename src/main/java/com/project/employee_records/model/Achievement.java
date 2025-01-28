@@ -1,33 +1,48 @@
 package com.project.employee_records.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
 @NoArgsConstructor(force = true)
 public class Achievement {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idAchiev;
+
     @NonNull
-    private String achievName;
+    private String title;
+
     @NonNull
-    private String achievDesc;
+    private String description;
+
     @NonNull
-    private Integer achievValueScore;
+    private Integer valueScore;
+
     @NonNull
     @CreationTimestamp
-    private LocalDateTime achievStartDate;
-    @NonNull
-    private LocalDate achievEndDate;
+    private LocalDateTime createdDate;
+
+    @OneToOne
+    @JoinColumn(name = "task_id")
+    @JsonIgnore
+    private Task task;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by_id_user")
+    private User createdBy;
+
+    @ManyToOne
+    @JoinColumn(name = "confirmed_by_id_user")
+    private User confirmedBy;
+
+    private LocalDateTime confirmedDate;
 }
