@@ -2,8 +2,11 @@ package com.project.employee_records.controller;
 
 import com.project.employee_records.model.Category;
 import com.project.employee_records.model.Task;
+import com.project.employee_records.model.User;
+import com.project.employee_records.model.UserForTask;
 import com.project.employee_records.service.CategoryService;
 import com.project.employee_records.service.TaskService;
+import com.project.employee_records.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -22,6 +27,7 @@ import java.net.URI;
 public class TaskController {
     private final TaskService taskService;
     private final CategoryService categoryService;
+    private final UserService userService;
 
     @GetMapping("/tasks/{idTask}")
     public ResponseEntity<Task> getTask(@PathVariable Integer idTask){
@@ -133,4 +139,46 @@ public class TaskController {
     public Task finishProject(@PathVariable Integer idTask) {
         return taskService.finish(idTask);
     }
+
+    /**
+     * Find users for task
+     */
+    @GetMapping("/tasks/findUsersForTask/{idTask}")
+    public List<UserForTask> findUsersForTask(@PathVariable Integer idTask) {
+        Task task = taskService.getTask(idTask).orElseThrow(() -> new RuntimeException("Can not find task"));
+        Category taskCategory = task.getCategory();
+
+        List<User> users = userService.getAllUsers();
+
+        List<UserForTask> usersWithTaskDetails = users.stream().map(user -> new UserForTask(user, userService.getAssignedUnfinishedTasksNumber(user.getIdUser())))
+                .collect(Collectors.toList());
+
+        List<UserForTask> usersWithExperience = usersWithTaskDetails.stream()
+                .filter(user -> user.getUser().getTasks().stream()
+                        .anyMatch(t -> t.getCategory() != null && t.getCategory().equals(taskCategory)))
+                .collect(Collectors.toList());
+
+        // If we can not find user with experience
+        if(usersWithExperience.isEmpty()) {
+            List<UserForTask> usersWithLowLoad = usersWithTaskDetails.stream()
+                    .sorted((u1, u2) -> Integer.compare(u1.getAssignedActiveTask(), u2.getAssignedActiveTask()))
+                    .toList();
+
+            if(usersWithLowLoad.size() > 5) {
+                usersWithLowLoad = usersWithLowLoad.subList(0, 5);
+            }
+
+            return usersWithLowLoad;
+        }
+
+        usersWithExperience.sort((u1, u2) -> Integer.compare(u2.getScore(), u1.getScore()));
+
+        if(usersWithExperience.size() > 5) {
+            usersWithExperience = usersWithExperience.subList(0, 5);
+        }
+
+        return usersWithExperience;
+    }
+
+
 }
