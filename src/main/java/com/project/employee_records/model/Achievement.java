@@ -1,10 +1,12 @@
 package com.project.employee_records.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -31,9 +33,8 @@ public class Achievement {
     @CreationTimestamp
     private LocalDateTime createdDate;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "task_id")
-    @JsonIgnore
     private Task task;
 
     @ManyToOne

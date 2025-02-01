@@ -5,9 +5,11 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -67,6 +69,11 @@ public class Task {
     @JsonIgnore
     private User user;
 
-    @OneToOne(mappedBy = "task")
-    private Achievement achievement;
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Achievement> achievements;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "rate_id")
+    private Rate rate;
 }

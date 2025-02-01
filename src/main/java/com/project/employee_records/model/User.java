@@ -36,22 +36,24 @@ public class User {
     @JsonIgnore
     private String password;
 
-    @NonNull
     private String phoneNumber;
-
-    @NonNull
     private String address;
-
-    @NonNull
     private String zipcode;
-
-    @NonNull
     private String city;
 
     @NonNull
+    @Enumerated(EnumType.ORDINAL)
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Task> tasks = new ArrayList<>();
+
+    public boolean isAdmin() {
+        if(role == Role.ADMIN) {
+            return true;
+        }
+
+        return false;
+    }
 }

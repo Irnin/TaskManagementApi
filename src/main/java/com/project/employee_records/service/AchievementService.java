@@ -13,5 +13,5 @@ public interface AchievementService {
     Achievement setAchievement(Achievement achievement);
     void deleteAchievement(Integer idAchiev);
 
-    Achievement getAchievementByTask(Integer taskId);
+    Page<Achievement> getAchievementsByTask(Integer taskId, Pageable pageable);
 }

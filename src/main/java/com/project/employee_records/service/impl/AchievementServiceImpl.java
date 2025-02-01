@@ -38,7 +38,7 @@ public class AchievementServiceImpl implements AchievementService {
     }
 
     @Override
-    public Achievement getAchievementByTask(Integer taskId) {
-        return achievementRepository.findByTask_IdTask(taskId);
+    public Page<Achievement> getAchievementsByTask(Integer taskId, Pageable pageable) {
+        return achievementRepository.findAllByTask_IdTask(taskId, pageable);
     }
 }

@@ -1,5 +1,6 @@
 package com.project.employee_records.service.impl;
 
+import com.project.employee_records.model.Role;
 import com.project.employee_records.model.User;
 import com.project.employee_records.repository.UserRepository;
 import com.project.employee_records.service.UserService;
@@ -34,5 +35,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Integer idUser) {
         userRepository.deleteById(idUser);
+    }
+
+    @Override
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+
+    @Override
+    public Boolean isUserAdmin(String email) {
+        Optional<User> user = userRepository.findUserByEmail(email);
+
+        User user1 = user.get();
+
+        System.out.println(user1.getRole());
+
+        return user.filter(value -> value.getRole() == Role.ADMIN).isPresent();
     }
 }

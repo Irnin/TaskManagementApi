@@ -1,7 +1,12 @@
 package com.project.employee_records.controller;
 
 import com.project.employee_records.model.Achievement;
+import com.project.employee_records.model.Task;
+import com.project.employee_records.model.User;
+import com.project.employee_records.repository.AchievementRepository;
 import com.project.employee_records.service.AchievementService;
+import com.project.employee_records.service.TaskService;
+import com.project.employee_records.service.UserService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -9,10 +14,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api/achievements")
@@ -20,6 +32,9 @@ import java.net.URI;
 @CrossOrigin(origins = "*")
 public class AchievementController {
     private final AchievementService achievementService;
+    private final AchievementRepository achievementRepository;
+    private final UserService userService;
+    private final TaskService taskService;
 
     @GetMapping("/{idAchiev}")
     public ResponseEntity<Achievement> getAchievement(@PathVariable Integer idAchiev){
@@ -68,13 +83,61 @@ public class AchievementController {
      * Getting achievement for particular task
      */
     @GetMapping("/task/{taskId}")
-    public ResponseEntity<Achievement> getAchievementForTask(@PathVariable Integer taskId) {
-        Achievement achievement = achievementService.getAchievementByTask(taskId);
+    public ResponseEntity<Page<Achievement>> getAchievementForTask(@PathVariable Integer taskId, Pageable pageable) {
+        Page<Achievement> achievements = achievementService.getAchievementsByTask(taskId, pageable);
 
-        if(achievement == null) {
+        if(achievements == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(achievement);
+        return ResponseEntity.ok(achievements);
+    }
+
+    @PatchMapping("/confirm/{idAchievement}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Achievement> confirmAchievement(@PathVariable Integer idAchievement) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        Optional<Achievement> achievement = achievementService.getAchievement(idAchievement);
+
+        if(achievement.isPresent()) {
+            User user = userService.getUserByEmail(email).get();
+
+            Achievement updatedAchievement = achievement.get();
+
+            updatedAchievement.setConfirmedBy(user);
+            updatedAchievement.setConfirmedDate(LocalDateTime.now());
+
+            achievementService.setAchievement(updatedAchievement);
+
+            return ok(updatedAchievement);
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Achievement> createAchievement(@RequestBody Achievement sentAchievement) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userService.getUserByEmail(email).get();
+
+        sentAchievement.setCreatedBy(user);
+
+        if(user.isAdmin()) {
+            sentAchievement.setConfirmedBy(user);
+            sentAchievement.setConfirmedDate(LocalDateTime.now());
+        }
+
+        Task task = taskService.getTask(sentAchievement.getTask().getIdTask())
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + sentAchievement.getTask().getIdTask()));
+
+        sentAchievement.setTask(task);
+
+        Achievement savedAchievement = achievementService.setAchievement(sentAchievement);
+
+        return ResponseEntity.ok(savedAchievement);
     }
 }
