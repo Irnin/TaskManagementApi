@@ -20,8 +20,6 @@ public class CustomUserDetails implements UserDetails {
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String authority = "ROLE_" + this.role.toString();
-        System.out.println("Użytkownik ma autoryzację: " + authority);
 
         return List.of(
                 new SimpleGrantedAuthority("ROLE_" + this.role.toString())

@@ -20,6 +20,11 @@ import java.net.URI;
 public class CategoryController {
     private final CategoryService categoryService;
 
+    @GetMapping("/canWeTalk")
+    public ResponseEntity<String> canWeTalk() {
+        return ResponseEntity.ok("Of course we can :>");
+    }
+
     @GetMapping("/categories/{idCat}")
     public ResponseEntity<Category> getCategory(@PathVariable Integer idCat){
         return ResponseEntity.of(categoryService.getCategory(idCat));
@@ -41,7 +46,7 @@ public class CategoryController {
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/categories/{idCat}")
+    @PutMapping("/updateCategory/{idCat}")
     public ResponseEntity<Void> updateCategory(@RequestBody Category category, @PathVariable Integer idCat){
         return categoryService.getCategory(idCat)
                 .map(c -> {

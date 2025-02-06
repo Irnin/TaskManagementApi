@@ -80,7 +80,7 @@ public class UserController {
     /**
      * Return information about user from session
      */
-    @GetMapping("/users/myAccount")
+    @GetMapping("/myAccount")
     public ResponseEntity<User> getMyAccount() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
