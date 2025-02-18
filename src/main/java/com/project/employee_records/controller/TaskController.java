@@ -1,12 +1,10 @@
 package com.project.employee_records.controller;
 
-import com.project.employee_records.model.Category;
-import com.project.employee_records.model.Task;
-import com.project.employee_records.model.User;
-import com.project.employee_records.model.UserForTask;
+import com.project.employee_records.model.*;
 import com.project.employee_records.service.CategoryService;
 import com.project.employee_records.service.TaskService;
 import com.project.employee_records.service.UserService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,7 +28,7 @@ public class TaskController {
     private final CategoryService categoryService;
     private final UserService userService;
 
-    @GetMapping("/tasks/{idTask}")
+    @GetMapping("/task/{idTask}")
     public ResponseEntity<Task> getTask(@PathVariable Integer idTask){
         return ResponseEntity.of(taskService.getTask(idTask));
     }
@@ -60,7 +59,7 @@ public class TaskController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/tasks/{idTask}")
+    @DeleteMapping("/task/{idTask}")
     public ResponseEntity<Void> deleteTask(@PathVariable Integer idTask){
         return taskService.getTask(idTask)
                 .map(t -> {
@@ -74,7 +73,7 @@ public class TaskController {
     /**
      * Create task
      */
-    @PostMapping(value = "/tasks/createTask/category/{idCategory}")
+    @PostMapping(value = "/createTask/category/{idCategory}")
     public ResponseEntity<Void> createTask(@RequestBody Task recievedTask, @PathVariable Integer idCategory) {
         Task task = new Task();
 
@@ -82,7 +81,6 @@ public class TaskController {
         task.setDescription(recievedTask.getDescription());
         task.setFinished(false);
         task.setTaskScore(recievedTask.getTaskScore());
-        task.setStartDate(recievedTask.getStartDate());
         task.setDueDate(recievedTask.getDueDate());
 
         Category category = categoryService.getCategory(idCategory).get();
@@ -113,6 +111,11 @@ public class TaskController {
     @GetMapping("/tasks/user/{idUser}")
     public Page<Task> getAssignedTask(@PathVariable Integer idUser, Pageable pageable) {
         return taskService.getAssignedTask(idUser, pageable);
+    }
+
+    @GetMapping("/task/{idTask}/assignedUser")
+    public User assignedUserToTask(@PathVariable Integer idTask) {
+        return taskService.userAssignedToTask(idTask);
     }
 
     /**
@@ -180,5 +183,10 @@ public class TaskController {
         return usersWithExperience;
     }
 
-
+    @GetMapping("/task/{idTask}/rate")
+    public Rate findRate(@PathVariable Integer idTask) {
+        return taskService.getTask(idTask)
+                .map(Task::getRate)
+                .orElse(null);
+    }
 }

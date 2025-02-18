@@ -1,6 +1,7 @@
 package com.project.employee_records.service;
 
 import com.project.employee_records.model.Task;
+import com.project.employee_records.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,4 +18,6 @@ public interface TaskService {
     Task assignUserToTask(Integer taskId, Integer userId);
     Task unassigneUser(Integer taskId);
     Task finish(Integer taskId);
+
+    User userAssignedToTask(Integer idTask);
 }

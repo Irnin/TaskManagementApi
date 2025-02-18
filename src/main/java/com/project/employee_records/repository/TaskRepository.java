@@ -10,6 +10,6 @@ import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, Integer> {
     Page<Task> findByUserIsNull(Pageable pageable);
-    Page<Task> findByUser_IdUser(Integer userIdUser, Pageable pageable);
+    Page<Task> findByUser_IdUserAndFinishedFalse(Integer userIdUser, Pageable pageable);
 
 }

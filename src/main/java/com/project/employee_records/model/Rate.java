@@ -1,6 +1,7 @@
 package com.project.employee_records.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class Rate {
     private LocalDateTime rateCreated;
 
     @OneToOne(mappedBy = "rate")
+    @JsonIgnore
     private Task task;
 
     @ManyToOne(fetch = FetchType.LAZY)

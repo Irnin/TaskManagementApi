@@ -47,10 +47,6 @@ public class Task {
     // Due dates
     @NonNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime startDate;
-
-    @NonNull
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dueDate;
 
     @JsonGetter("categoryName")
@@ -75,5 +71,6 @@ public class Task {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "rate_id")
+    @JsonIgnore
     private Rate rate;
 }

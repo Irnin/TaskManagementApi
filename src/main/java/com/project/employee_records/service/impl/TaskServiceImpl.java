@@ -49,7 +49,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Page<Task> getAssignedTask(Integer idUser, Pageable pageable) {
-        return taskRepository.findByUser_IdUser(idUser, pageable);
+        return taskRepository.findByUser_IdUserAndFinishedFalse(idUser, pageable);
     }
 
     @Override
@@ -89,5 +89,12 @@ public class TaskServiceImpl implements TaskService {
         task.setFinishedDate(LocalDateTime.now());
 
         return taskRepository.save(task);
+    }
+
+    @Override
+    public User userAssignedToTask(Integer idTask) {
+        return taskRepository.findById(idTask)
+                .map(Task::getUser)
+                .orElse(null);
     }
 }
