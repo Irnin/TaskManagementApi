@@ -97,4 +97,9 @@ public class TaskServiceImpl implements TaskService {
                 .map(Task::getUser)
                 .orElse(null);
     }
+
+    @Override
+    public Page<Task> getAdminJobs(Pageable pageable) {
+        return  taskRepository.findTasksWithoutRateAndUnconfirmedAchievements(pageable);
+    }
 }

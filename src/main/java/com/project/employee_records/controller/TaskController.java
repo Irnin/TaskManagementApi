@@ -189,4 +189,9 @@ public class TaskController {
                 .map(Task::getRate)
                 .orElse(null);
     }
+
+    @GetMapping("/tasks/adminJobs")
+    public Page<Task> getAdminJobs(Pageable pageable) {
+        return taskService.getAdminJobs(pageable);
+    }
 }
