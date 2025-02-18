@@ -118,20 +118,20 @@ public class AchievementController {
         }
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Achievement> createAchievement(@RequestBody Achievement sentAchievement) {
+    @PostMapping("/create/forTask/{taskId}")
+    public ResponseEntity<Achievement> createAchievement(@RequestBody Achievement sentAchievement, @PathVariable Integer taskId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userService.getUserByEmail(email).get();
 
         sentAchievement.setCreatedBy(user);
 
-        if(user.isAdmin()) {
+        if (user.isAdmin()) {
             sentAchievement.setConfirmedBy(user);
             sentAchievement.setConfirmedDate(LocalDateTime.now());
         }
 
-        Task task = taskService.getTask(sentAchievement.getTask().getIdTask())
+        Task task = taskService.getTask(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + sentAchievement.getTask().getIdTask()));
 
         sentAchievement.setTask(task);

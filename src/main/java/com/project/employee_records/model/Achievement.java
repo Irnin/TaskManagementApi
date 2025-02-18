@@ -35,6 +35,7 @@ public class Achievement {
 
     @ManyToOne
     @JoinColumn(name = "task_id")
+    @JsonIgnore
     private Task task;
 
     @ManyToOne
