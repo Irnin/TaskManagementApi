@@ -134,12 +134,11 @@ public class UserController {
 
         Role role = Role.EMPLOYEE;
 
-        switch(idRole) {
-            case 0:
-                role = Role.ADMIN;
-            case 1:
-                role = Role.EMPLOYEE;
-        }
+        role = switch (idRole) {
+            case 0 -> Role.ADMIN;
+            case 1 -> Role.EMPLOYEE;
+            default -> role;
+        };
 
         User user = userService.getUser(idUser).orElseThrow(() -> new RuntimeException("User not found"));
         user.setRole(role);
