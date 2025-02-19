@@ -122,6 +122,8 @@ public class UserController {
 
         userService.setUser(newUser);
 
+        System.out.println(newUser.getPassword());
+
         return ResponseEntity.ok("User was created");
     }
 
