@@ -12,6 +12,7 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Integer> {
     Page<Task> findByUserIsNull(Pageable pageable);
     Page<Task> findByUser_IdUserAndFinishedFalse(Integer userIdUser, Pageable pageable);
+    Page<Task> findByFinishedTrue(Pageable pageable);
 
     @Query("SELECT DISTINCT t FROM Task t WHERE (t.finished = true AND t.rate IS NULL) OR t.idTask IN (SELECT a.task.idTask FROM Achievement a WHERE a.confirmedBy IS NULL)")
     Page<Task> findTasksWithoutRateAndUnconfirmedAchievements(Pageable pageable);

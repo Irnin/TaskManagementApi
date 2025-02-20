@@ -33,10 +33,6 @@ public class User {
     @JsonIgnore
     private String password;
 
-    private String phoneNumber;
-    private String address;
-    private String zipcode;
-    private String city;
 
     @NonNull
     @Enumerated(EnumType.ORDINAL)

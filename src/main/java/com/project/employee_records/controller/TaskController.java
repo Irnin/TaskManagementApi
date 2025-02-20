@@ -153,7 +153,7 @@ public class TaskController {
 
         List<User> users = userService.getAllUsers();
 
-        List<UserForTask> usersWithTaskDetails = users.stream().map(user -> new UserForTask(user, userService.getAssignedUnfinishedTasksNumber(user.getIdUser())))
+        List<UserForTask> usersWithTaskDetails = users.stream().map(user -> new UserForTask(user, userService.getAssignedUnfinishedTasksNumber(user.getIdUser()), taskCategory))
                 .collect(Collectors.toList());
 
         List<UserForTask> usersWithExperience = usersWithTaskDetails.stream()
@@ -193,5 +193,10 @@ public class TaskController {
     @GetMapping("/tasks/adminJobs")
     public Page<Task> getAdminJobs(Pageable pageable) {
         return taskService.getAdminJobs(pageable);
+    }
+
+    @GetMapping("/tasks/finished")
+    public Page<Task> getFinishedTasks(Pageable pageable) {
+        return taskService.getFinishedTasks(pageable);
     }
 }

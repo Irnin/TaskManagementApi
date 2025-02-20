@@ -21,4 +21,6 @@ public interface TaskService {
 
     User userAssignedToTask(Integer idTask);
     Page<Task> getAdminJobs(Pageable pageable);
+
+    Page<Task> getFinishedTasks(Pageable pageable);
 }

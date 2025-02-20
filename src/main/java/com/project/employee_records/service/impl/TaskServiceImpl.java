@@ -102,4 +102,9 @@ public class TaskServiceImpl implements TaskService {
     public Page<Task> getAdminJobs(Pageable pageable) {
         return  taskRepository.findTasksWithoutRateAndUnconfirmedAchievements(pageable);
     }
+
+    @Override
+    public Page<Task> getFinishedTasks(Pageable pageable) {
+        return taskRepository.findByFinishedTrue(pageable);
+    }
 }
